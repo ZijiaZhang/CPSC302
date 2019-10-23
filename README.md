@@ -44,7 +44,7 @@ $x = \pm (1+ \frac{d_1}{2} + \frac{d_2}{4} + \dots) \times 2^e$
 with binary digits $d_i = 0$ or 1 and exponent e.
 
 ### Floating point with fix number t:
-$fl(x) = \pm*1.\bar{d_1}\bar{d_2} \dots \bar{d_t}) \times 2^e$
+$fl(x) = \pm*1.\bar{d_1}\bar{d_2} \dots \bar{d_t} \times 2^e$
 
 To repersent the number in floating point form:
 Copy the first t digets. For the remaining degits if it is cloaser to one bigger, add it. Otherwise no.
@@ -105,7 +105,7 @@ Do fix point Iteraton.
 
 Quadratically convergent. There is a constant M.
 
-$|x_{k+1} - x^*| \leq M |x_k-x^*|^2$
+$|x_{k+1} - x^* | \leq M |x_k-x^* |^2$
 
 
 ### Secant Method
@@ -123,7 +123,7 @@ So we need $x_0$ and $x_1$ to start.
 This is superlinear convergence.
 Faset than simple fixed point iteration not as fast as Newton's iteration.
 
-$|x_{k+1} - x^*| \leq \rho_k|x_k-x^*|$
+$|x_{k+1} - x^* | \leq \rho_k|x_k-x^* |$
 
 ## Minimizing Function in one Variable
 
