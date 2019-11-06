@@ -1,4 +1,49 @@
+
 # CPSC302
+
+- [Errror](#errror)
+  * [Absolute Error](#absolute-error)
+  * [Relative Error](#relative-error)
+- [Source of Error](#source-of-error)
+  * [Cancelation Error](#cancelation-error)
+- [Algorithm Properties](#algorithm-properties)
+  * [Accuracy](#accuracy)
+  * [Efficiency](#efficiency)
+  * [Robustness](#robustness)
+- [Stable and Unstable Algorithm](#stable-and-unstable-algorithm)
+- [Floating Point Systems](#floating-point-systems)
+  * [Binary](#binary)
+  * [Floating point with fix number t:](#floating-point-with-fix-number-t-)
+  * [General floating point system](#general-floating-point-system)
+- [Solving a function with one Variable](#solving-a-function-with-one-variable)
+  * [Bisection Method](#bisection-method)
+    + [Pro](#pro)
+    + [Counts](#counts)
+    + [Method:](#method-)
+  * [Fixed point Iteration](#fixed-point-iteration)
+    + [Method](#method)
+    + [Rate of convergence](#rate-of-convergence)
+  * [Newton's Method](#newton-s-method)
+    + [Cons](#cons)
+    + [Pros](#pros)
+    + [Speed of convergence.](#speed-of-convergence)
+  * [Secant Method](#secant-method)
+    + [Convergence](#convergence)
+- [Minimizing Function in one Variable](#minimizing-function-in-one-variable)
+- [Solve for linear problem](#solve-for-linear-problem)
+  * [Backward substitution.](#backward-substitution)
+    + [Constrains:](#constrains-)
+    + [Algotrithm:](#algotrithm-)
+  * [Forward substitution](#forward-substitution)
+    + [Constrains](#constrains)
+  * [Gaussian elimination](#gaussian-elimination)
+    + [Idea:](#idea-)
+    + [Algorithm](#algorithm)
+    + [Cost](#cost)
+  * [LU decomposition](#lu-decomposition)
+    + [Application/ Usage](#application--usage)
+
+
 ## Errror
 ### Absolute Error
 The absolute error in v approximating u is $|u-v|$.
@@ -131,3 +176,75 @@ $|x_{k+1} - x^* | \leq \rho_k|x_k-x^* |$
 2. Find min points that f''(x) > 0.
 3. Compare the values of f(x) and choose the minimal.
 
+
+## Solve for linear problem
+
+Ax = b
+
+### Backward substitution.
+#### Constrains: 
+When A is an upper triangular matrix. i.e. all element below the main diagnal are zero: $a_{ij} = 0, \forall i>j$
+
+#### Algotrithm: 
+```
+for k=n:-1:1
+x(k) = ( b(k) - A(k,k+1:n) * x(k+1:n) ) / A(k,k);
+end
+```
+ 
+ ### Forward substitution
+#### Constrains
+A is a lower triangular matrix.
+$a_{ij} = 0, \forall i<j$
+
+```
+for k=1:n
+x(k) = (b(k) - A(k,1:k-1) * x(1:k-1) ) / A(k,k);
+end
+```
+
+### Gaussian elimination
+
+#### Idea:
+Use elementary transformation to transform A to a upper triangular matrix.
+
+$MAx = Mb$
+Where MA is a upper triangular matrix.
+
+#### Algorithm
+```
+for k=1:n-1
+for i=k+1:n
+l(i,k) = A(i,k)/A(k,k);
+for j=k+1:n
+A(i,j) = A(i,j) - l(i,k)*A(k,j);
+end
+b(i) = b(i) - l(i,k)*b(k);
+end
+end
+```
+
+#### Cost
+Elimination: 
+$\approx 2 \sum_{k=1}^{n-1} (n-k)^2 = \frac{2}{3}n^3+O(n^2)$
+
+Backward substitution:
+$\approx 2 \sum_{k=1}^{n-1}(n-k) = 2 \frac{(n-1)n}{2} \in O(n^2)$
+
+### LU decomposition
+Notice that $M = M^{(n-1)} \dots M^{(2)} M^{(1)}$
+Where $M^{k}$ is a step of elementary operation. 
+These are all **Lower triangular matrices** 
+Then, matrix M is **Unit Lower Triangular**
+We also have $L = M^{-1}$ also a lower triangular matrix.
+
+Then $LU = LMA = A$
+#### Application/ Usage
+If we have a LU decomposition of A. We will get:
+- $A = LU$
+- $LUx = b$
+- let $y = Ux$
+
+Then:
+1. Solve for $Ly = b$ (forward substitution)
+2. Solve for $Ux = y$ (backward substitution)
