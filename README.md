@@ -1,4 +1,5 @@
 
+
 # CPSC302
 
 - [Errror](#errror)
@@ -248,3 +249,53 @@ If we have a LU decomposition of A. We will get:
 Then:
 1. Solve for $Ly = b$ (forward substitution)
 2. Solve for $Ux = y$ (backward substitution)
+
+### LU Decomposition with Pivoting Strategies
+
+If the pivot in the Gaussian Elimination is small (which is normal). We will have a big multiplier. Which will magnify the roundoff error.
+
+So at each stage of the  elimination, we will choose the largest one to be our pivot. So we will multiply a permutation matrix P to exchange the rows.
+
+That is: 
+$PA = LU$
+
+```
+for k = 1:n-1
+% todo: find q = row index of relative maximum in column k of matrix A
+% todo: interchange rows k and q in A and record this in p (also interchange rows in b)
+for i=k+1:n
+l(i,k) = A(i,k)/A(k,k);
+for j = k+1:n
+A(i,j) = A(i,j) - l(i,k)*A(k,j);
+end
+b(i) = b(i) - l(i,k)*b(k);
+end
+end
+```
+
+$B = M^{(n-1)} P^{(n-1)}\dots M^{(1)} P^{(1)}$ 
+
+$P = P^{(n-1)} \dots P^{(1)}$
+
+$B = L^{-1}P$
+
+For example: 
+We have a matrix A:
+
+$U = M^{(2)} P^{(2)} M^{(1)}P^{(1)} A$
+
+We can rewrite this To move P2 and P1 together.
+
+$U = M^{(2)} (P^{(2)}M^{(1)} P^{(2)T}) P^{(2)} P^{(1)} A$
+
+$U = M_{new}^{(2)} M_{new}^{(1)}P_{new}A$
+ 
+Here we merged several steps together as one operation.
+
+Then All elements in the new Ms are negation L.
+
+$L = eye - (M_{new}^{(2)} - eye) - (M_{new}^{(1)} - eye)$
+
+----Here, we first initialize the L with its diagonal of all ones.  Then we can delete all the diagnals in the matrix Ms and only keep those that are under the diagonal which is $M - eye$. 
+
+$P = P^{(2)} P^{(1)}$
