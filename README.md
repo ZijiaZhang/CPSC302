@@ -1,5 +1,6 @@
 
 
+
 # CPSC302
 
 - [Errror](#errror)
@@ -299,3 +300,60 @@ $L = eye - (M_{new}^{(2)} - eye) - (M_{new}^{(1)} - eye)$
 ----Here, we first initialize the L with its diagonal of all ones.  Then we can delete all the diagnals in the matrix Ms and only keep those that are under the diagonal which is $M - eye$. 
 
 $P = P^{(2)} P^{(1)}$
+
+### Error in the Solution
+
+Say we have a approximate solution $\hat{x}$. We want to get the error it with the real solution x. We will use $\frac{\| x - \hat{x}\|}{\|x\|}$ as the relative error. But we don't know the exact solution $x$. 
+
+#### Approximate the Error.
+We have an estimate: $\hat{r} = b - A\hat{x}$ as residual. And relative residual $\frac{\|\hat{r}\|}{\|b\|}$. This is am approximation of the error. If the condition number ($\kappa(A) = \|A\|\|A^{-1}\|$) is small, we will have a good approximation on the relative error.
+
+#### Condition Number
+- $\kappa _2(A)$, $\kappa_\infty(A)$. The subscript indicates what norm is used.
+- $\kappa(A) \geq 1$
+- For Orthogonal matrices $\kappa(Q) = 1$
+- $\kappa(A)$ indicate how close A is to singular.
+- If A is symmetric positive definite. $\kappa(A) = \frac{\text{Biggest eigenvalue}}{\text{Smallest eigenvalue}}$
+- If A is nonsingular $\kappa(A) = \frac{\text{Biggest singular value}}{\text{Smallest singular value}}$
+
+### Cholesky Decomposition
+
+Since A is a symmetric positive definite, We can write $A = GG^T$ Where G is a lower triangular matrix. 
+
+Since A is symmetric positive definite matrix, we can write $A = LU$.
+
+We can rewrite U as: 
+$U = D * \widetilde{U} = \begin{pmatrix}  
+u_{11} \\  
+ & u_{22} \\
+ && u_{33} \\
+ &&& \ddots \\
+ &&&&u_{nn}  
+\end{pmatrix} *
+\begin{pmatrix}  
+1 & \frac{u_{12}}{u_{11}} &  \dots & \dots & \frac{u_{1n}}{u_{11}}\\  
+ & 1 & \frac{u_{23}} {u_{22}} &\dots & \frac{u_{2n}}{u_{22}}  \\
+ && 1 \\
+ &&& \ddots \\
+ &&& &1  
+\end{pmatrix}$ 
+
+Then we have
+$A = LD\widetilde{U}$
+Because A is symmetric, we can have $L^T = \widetilde{U}$
+$A = LDL^T$
+We can see that $G = LD^{1/2}$ 
+
+```
+for k=1:n 
+A(k,k) = sqrt(A(k,k));
+for i=k+1:n 
+A(i,k) = A(i,k) / A(k,k);
+end 
+for j=k+1:n
+ for i=j:n
+  A(i,j) = A(i,j) - A(i,k) * A(j,k);
+ end 
+end
+end
+```
