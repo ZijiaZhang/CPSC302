@@ -1,6 +1,7 @@
 
 
 
+
 # CPSC302
 
 - [Errror](#errror)
@@ -357,3 +358,60 @@ for j=k+1:n
 end
 end
 ```
+
+### Banded Matrices
+
+#### GE decomposition for Sparse Matrices
+
+```
+for k = 1:n-1
+for i=k+1:k+p-1 % fewer iterations
+l(i,k) = A(i,k)/A(k,k);
+for j = k+1:k+q-1 % fewer iterations
+A(i,j) = A(i,j) - l(i,k)*A(k,j);
+end
+b(i) = b(i) - l(i,k)*b(k);
+end
+end
+```
+**Float Count**
+$O(n)$
+
+#### GEPP with banded matrices.
+
+- The upper bandwidth of U may increase from q to q + p -1. 
+- The matrix L, although it remains unit lower triangular, is no longer tightly banded (although it has the same number of nonzeros per column).
+
+#### Fill-in Issue.
+
+If A is a sparse matrix, after decomposition, the matrix U and L might have more entries than A.
+We can use **Permutations and Ordering** to solve the Fill-in Issue.
+
+
+#### Data fitting
+**Linear Data fitting**
+Given a set of data points A and value b, we want to find an x that minimize $\|b-Ax\|$
+with A size of $m\times n$ and $m>n$
+
+**Basic Algorithm**
+To solve $\min_x\|b-Ax\|$ is to solve $A^TAx = A^Tb$
+The cost of this method will be mostly $A^Tb$ if $m \gg n$.
+This might cause issue when A is most linear dependent columns.
+
+**QR decomposition**
+Notice that $\|b-Ax\| = \|r\| = \|Pr\| = \|Pb - PAx\|$ for any Orthogonal Matrix P.
+So, find orthogonal matrix $Q = P^T$ that transforms A into upper triangular form
+
+$A = Q \begin{pmatrix} R \\ 0\end{pmatrix}$
+To solve the equation, with QR decomposition:
+
+$\|b-Ax\| = \|b - Q \begin{pmatrix} R \\ 0\end{pmatrix}x\| = \|Q^Tb - \begin{pmatrix} R \\ 0\end{pmatrix}x\|$
+
+$\|Q^Tb\| = \begin{pmatrix} c\\ d\end{pmatrix}$ Where d is the corresponding rows of the R, and d are those corresponding to "0".
+
+$\|r\|^2 = \|b-Ax\|^2 = \|c-Rx\|^2 + \|d\|^2$
+
+We can see the solve x in  $Rx = c$, so we can obtain $r = d$.
+Solving $Rx = c$ we can use back-substitution.
+**Flop Count**
+$2mn^2 - \frac 2 3n^3$ Roughly double the normal equations.
