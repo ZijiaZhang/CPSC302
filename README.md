@@ -2,6 +2,7 @@
 
 
 
+
 # CPSC302
 
 - [Errror](#errror)
@@ -413,5 +414,61 @@ $\|r\|^2 = \|b-Ax\|^2 = \|c-Rx\|^2 + \|d\|^2$
 
 We can see the solve x in  $Rx = c$, so we can obtain $r = d$.
 Solving $Rx = c$ we can use back-substitution.
-**Flop Count**
+Flop Count:
 $2mn^2 - \frac 2 3n^3$ Roughly double the normal equations.
+
+**Gram-Schmidt orthogonalization**
+A way to calculate QR decomposition.
+
+Say a 2 by 2 matrix:
+
+$\begin{pmatrix} a_{11} &a_{12}\\ a_{21} &a_{22}\\ 
+a_{31} &a_{32}\\ \end{pmatrix}
+ = \begin{pmatrix} q_{11} &q_{12}\\ q_{21} &q_{22}\\ 
+q_{31} &q_{32}\\ \end{pmatrix}
+\begin{pmatrix} r_{11} &r_{12}\\ 0 &r_{22} \end{pmatrix}$ 
+We rewrite in this way:
+$(a_1, a_2) = (q_1, q_2) \begin{pmatrix} r_{11} &r_{12}\\ 0 &r_{22} \end{pmatrix}$
+
+So we can have 
+$a_1 = q_1*r_{11}$
+
+$a_2 = q_1 *r_{12} + q_2* r_{22}$
+
+Because $q_1$ and $q_2$ are orthonormal, 
+
+$\|q_1\|$ = 1 
+
+We can see that $r_{11} = \|a_1\|$ and $q_1 = a_1/r_{11}$
+
+Because $q_1$ and $q_2$ are orthonormal, and $a_2 = r_{12}q_1 + r_{22}q_2$. We can see $r_{12}$ is the projection of $a_2$ onto $q_1$. so $r_{12} = <a_2,q_1>$. And we come back to the condition calculating the first column.
+
+
+**Modified Gram-Schmidt orthogonalization**
+
+The classical Gram-Schmidt method becomes unstable when $\kappa(A)$is large.
+
+```
+for j=1:n
+ q(:,j) = a(:,j);
+  for i=1:j-1
+   r(i,j) = q(:,j)' * q(:,i);
+  end 
+ r(j,j) = norm(q(:,j)); 
+ q(:,j) = q(:,j)/r(j,j);
+end
+```
+
+**Householder transformation**
+- ***SaveForLater***
+
+**SVD & TSVD decomposition**
+- SVD
+$A = U\Sigma V^T$ so 
+$\|b-Ax\| = \|b - U\Sigma V^T x \| = \|U^Tb-\Sigma V^Tx\| = \|U^Tb-\Sigma y\|$ with $x = Vy$, because U and V are Orthognal matrix.
+Denote $U^Tb = z$ we can see that the optimal y is $y_i = z_i/\sigma_i$ for $1 \leq i \leq r$ where r is the rank of A.  This is similar to the QR decomposition method above, that is as stable as the QR decomposition method.
+
+- TSVD
+  If we don't know the effective rank r, we would approximate the r. That is: 
+  If $\kappa(A)$ is too large we would check for i = n to 1 that the first i makes $\sigma_1/\sigma_i$ with in a certain therathhold.
+  We than set $\sigma_{r+1} \dots \sigma_{n}$ to 0.
