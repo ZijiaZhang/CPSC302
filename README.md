@@ -3,6 +3,7 @@
 
 
 
+
 # CPSC302
 
 - [Errror](#errror)
@@ -472,3 +473,80 @@ Denote $U^Tb = z$ we can see that the optimal y is $y_i = z_i/\sigma_i$ for $1 \
   If we don't know the effective rank r, we would approximate the r. That is: 
   If $\kappa(A)$ is too large we would check for i = n to 1 that the first i makes $\sigma_1/\sigma_i$ with in a certain therathhold.
   We than set $\sigma_{r+1} \dots \sigma_{n}$ to 0.
+
+
+***Iterative Methods***
+
+Stationary Method:
+	$x_{k+1} = x_{k} + M^{-1}r_k$
+**Jacobi**
+  Choose M = D. (Diagnal of A).
+```
+% Jacobi
+
+[~,n] = size(A);
+
+x = zeros(n,1); r = b;
+
+tol = 1.e-6;
+
+for i=1:100
+
+x = x + r./Dv; % or x = x + D \ r
+
+r = b - A*x;
+
+if norm(r)/norm(b) < tol, break, end
+
+end
+
+A*x, b % confirm Ax ≈ b
+```
+
+**Gauss-Seidel**
+M = E (Lower Triangular part of A).
+
+```
+% Gauss-Seidel
+
+[~,n] = size(A);
+
+x = zeros(n,1); r = b;
+
+tol = 1.e-6;
+
+for i=1:100
+
+x = x + E \ r;
+
+r = b - A*x;
+
+if norm(r)/norm(b) < tol, break, end
+
+end
+
+A*x, b % confirm Ax ≈ b
+```
+
+**Properties**
+- Jacobi is more easily parallelized.
+
+- Jacobi matrix M is symmetric.
+
+- GS converges whenever Jacobi converges and often (but not always) twice as fast.
+
+- Both Jacobi and GS converge if A is strictly (or at least irreducibly) diagonally dominant. GS is also guaranteed to converge if A is symmetric positive definite.
+
+- Both methods are simple but converge slowly (if they converge at all). They are used as building blocks for faster, more complex methods.
+
+- Both Jacobi and GS are simple examples of a stationary method.
+
+**Over-relaxiation and under-Relaxiation**
+Make modification on Jacobi and GS. 
+$^{new}x_{k+1} = \omega x_{k+1} + (1-\omega) x_k$
+
+When $\omega > 1$ it is an over-relaxation: 
+- Base on Gauss-Seidel(GS), and $1<\omega<2$. We have **SOR**:  $x_{k+1} = x_k + \omega[(1-\omega)D + \omega E]^{-1}r_k$
+
+When $\omega < 1$ it is an under-relaxation: 
+- Base on Jacobi and $\omega = 0.8$:  $x_{k+1} = x_k + \omega D^{-1}r_k$
