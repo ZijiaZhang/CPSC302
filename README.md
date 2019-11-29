@@ -4,6 +4,7 @@
 
 
 
+
 # CPSC302
 
 - [Errror](#errror)
@@ -550,3 +551,51 @@ When $\omega > 1$ it is an over-relaxation:
 
 When $\omega < 1$ it is an under-relaxation: 
 - Base on Jacobi and $\omega = 0.8$:  $x_{k+1} = x_k + \omega D^{-1}r_k$
+
+***Convergence of Stationary Methods***
+The convergence of Stationary methods depends on the **spectral radius** of a square matrix B. It is $\rho = \max _i |\mu_i|$ (Magnitute of the largest eignvalue).
+
+- The stationary method with iteration martrxi T will only converge iff $\rho(T) < 1$, where $T = I - M^{-1}A$
+- The convergence rate is $rate = -\log_{10}\rho(T)$
+- Number of iterations to reduce the error by a factor of 10 is $k = \frac 1 {rate}$
+- for SOR, $\omega_{opt} = \frac 2 {1+\sqrt{1-\rho_J^2}} > 1$ where $\rho_J$ is the spectral radius of the Jacobi iteration matrix. For the model Poisson problem we have $\omega_{opt} = \frac 2 {1+ \sin(\frac \pi {N+1})}$
+
+*Convergence of Jacobi on Poison Problem*
+- O(n) Iteration is required to decrease the error by a constant factor.
+
+So Jacobi and Gauss-Seidel requires O(n) iterations and $O(n^2)$ operations.
+And SOR with optimal $\omega$ requires $O(N)$ iteraions and $O(n^{3/2})$ operations.
+
+
+***Non-Stationary Method***
+$x_{k+1} = x_k + \alpha_k p_k$. Where $\alpha_k$ is step size, $p_k$ is search direction.
+**Gradient decent**
+Take $p_k = r_k$ That is $M_k = \alpha_k^{-1}I$
+
+To choose the step size, we use exact line search: 
+- $\min_\alpha \phi(x_k+\alpha r_k) = \frac 1 2(x_k+\alpha r_k)^TA(x_k+\alpha r_k) - b^T(x_k+\alpha r_k)$
+
+We differentiate respect to $\alpha$, and choose alpha when the diravitive = 0.
+
+$\alpha = \frac{<r_k,r_k>} {<r_k,Ar_k>}$
+
+We have steepest decent.
+
+**Conjugate Gradient(CG)**
+We have initial guess $x_0$ and toleranve tol. 
+$r_0 = b - Ax_0$,
+$\delta_0 = <r_0,r_0>$,
+$b_\delta = <b,b>$,
+$k = 0$,
+$p_0 = r_0$.
+
+While $\delta_k > tol^2 b_\delta$:
+1. $s_k = Ap_k$
+2. $\alpha_k = \frac{\delta_k}{<p_k,s_k>}$
+3. $x_{k+1} = x_k + \alpha_k p_k$
+4. $r_{k+1} = r_k - \alpha_k s_k$
+5. $\delta_{k+1} = <r_{k+1}, r_{k+1}>$
+6. $p_{k+1} = r_{k+1} + \frac{\delta{k+1}}{\delta_k}p_k$
+7. k = k+1
+
+This method is faster than Jacobi and SOR.
