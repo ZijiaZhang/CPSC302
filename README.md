@@ -599,3 +599,42 @@ While $\delta_k > tol^2 b_\delta$:
 7. k = k+1
 
 This method is faster than Jacobi and SOR.
+
+**Preconditioning**
+
+If the condition number is high, we can have a matrix P, and change the problem to $P^{-1}Ax = P^{-1}b$. So we have $P^{-1}A$ have a better condition than A. Howeber, P is usually hard to find. 
+
+**Common ways to find P**
+We want P to be close to $A^{-1}$, so P can be a incomplete factorization of A. 
+- Cholesky 
+	- $P = FF^T$
+- LU
+	- $P = LU$
+	- 
+If we set the drop tolerance small, the condition number $\kappa$ will be low, hense low # of iterations. But the cost calculating P will be higher per iteration, as there is more fillin. 
+
+If we expand the CG method.
+
+$r_0 = r_0$
+$r_1 = r_0 - \frac {\delta_0}{Ap_0 * p_0} * Ap_0 = r_0 - c_0 * Ap_0$
+...
+
+We can see that $r_k  = p(A)r_0$ for some polynomial $p(x)$ with degree k and p(0) = 1.
+Also we can derive the error $e_k = x - x^* = p(A)e_0$ and $x_k - x_0 = q(A)r_0$, where q has a degree of $k-1$
+Define a krylov subspace as follows:
+	$\mathcal{K}_k(C; \mathbf{y}) = span\{y, Cy, C^2y, \dots, C^{k-1}y\}$
+so we can see that $r_k\in\mathcal{K}_{k+1}(A; \mathbf{r_0})$ and $x_k-x_0 \in\mathcal{K}_{k}(A; \mathbf{r_0})$
+So essentially, we are expanding the subsapce every iteration.
+
+1. Construct othognal basis
+	Arnoldi – First basis vector $q_1 = \frac {r_0} {\|r_0\|}$. Then jth step vector $q_j\in \mathcal{K}_{j}(A; \mathbf{r_0})$  chosen to observe orthogonality $<q_m , q_j> = 0$ for m < j , and normality $<q_j,q_j> = 1$.
+
+2. Define optimality property
+	- Galerkin orthogonalization 
+	Force residual $r_k$ to be orthogonal to Krylov subspace. Leads to CG for symmetric positive definite matrices.
+	- GMRES for general matrices
+	Minimizing $\|r_k\|_2$ within Krylov subspace leads to generalized minimum residual (GMRES).
+	But we need to store lots of vectors when k goes large. So we have an alternative: restarted GMRES:
+		- Run GMRES as described above. 
+		-  Once m vectors reached, take current iterate as initial guess and start again. 
+		-  Repeat until convergence criterion met.
